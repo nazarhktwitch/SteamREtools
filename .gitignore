@@ -1,6 +1,7 @@
 # Ignore Python bytecode and cache files
 *.pyc
 __pycache__/
+.ruff-cache/
 
 # ...but keep the original app bytecode in originals/
 !originals/*.pyc

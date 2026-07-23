@@ -13,11 +13,13 @@ You can call it as you want, even `crack`.
 
 - **Hubcap API** - browse and search game manifests
 - **DepotBox API** - download game depots
-- **ACF management** - install, update, remove games
-- **Fixes system** - apply compatibility fixes
-- **Steam repair** - repair Steam with CloudRedirect etc.
-- **Premium bypass** - all features unlocked, no Discord auth required
+- **ACF Management** - install, update, remove games
+- **Steam Repair** - repair Steam with CloudRedirect etc.
+- **Premium Bypass** - all features unlocked, no Discord auth required
+- **No Ban** - you cant get banned from SteamTools (user replacement)
 - **No Anti-debug** - no Anti-Debug protection, unlike original
+- **Reinstall Backup** - backup your games to another machine
+- **And more**
 
 ## How it works
 

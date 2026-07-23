@@ -1,7 +1,10 @@
 """
 Load original .pyc modules, bypass premium with patches
 """
-import sys, os, marshal, types
+import sys
+import os
+import marshal
+import types
 
 if getattr(sys, 'frozen', False):
     ORIGINALS_DIR = os.path.join(sys._MEIPASS, 'originals')
@@ -25,7 +28,7 @@ def _load_from_pyc(fullname, path, is_package=False):
         code = marshal.loads(data[16:])
     except ValueError as e:
         print(f"[loader] ERROR: Cannot load {fullname} - {e}")
-        print(f"[loader] This usually means Python version mismatch.")
+        print("[loader] This usually means Python version mismatch.")
         print(f"[loader] The .pyc files target Python 3.11, you're running {sys.version}")
         raise
     mod = types.ModuleType(fullname)

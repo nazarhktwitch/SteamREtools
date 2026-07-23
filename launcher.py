@@ -2,15 +2,23 @@
 """
 Loads original modules, patches only premium checks
 """
-import os, sys, json, socket, time, threading, atexit
+import base64
+import os
+import sys
+import socket
+import time
+import threading
+import atexit
+import traceback
+import webbrowser
+
+from loader import load_original
 
 if sys.version_info[:2] != (3, 11):
     print(f"[launcher] ERROR: Need Python 3.11, got {sys.version_info.major}.{sys.version_info.minor}")
     print("\nPress Enter to exit...", file=sys.stderr)
     input()
     sys.exit(1)
-
-from loader import load_original
 
 print("[launcher] Loading backend...")
 backend = load_original('backend')
@@ -46,7 +54,6 @@ _session.update(token="bypass", user={"name": "SteamREtools User", "id": "0"}, t
 
 # Patch backend
 # Set the premium API key (DepotBox) and Hubcap key
-import base64
 _PREMIUM_KEY = "2f28af4e-ee19-4768-8736-df10c4b86a73"
 backend._ENCODED_KEY = base64.b64encode(_PREMIUM_KEY.encode()).decode()
 backend._DEPOTBOX_ENCODED_KEY = base64.b64encode(_PREMIUM_KEY.encode()).decode()
@@ -59,18 +66,24 @@ _LOCK_FILE = os.path.join(os.environ.get('TEMP', '.'), 'steamretools.lock')
 def _terminate_prior_instance():
     if os.path.exists(_LOCK_FILE):
         try:
-            with open(_LOCK_FILE) as f: pid = int(f.read().strip())
-            try: os.kill(pid, 0)
-            except: os.remove(_LOCK_FILE)
-        except: pass
-    with open(_LOCK_FILE, 'w') as f: f.write(str(os.getpid()))
+            with open(_LOCK_FILE) as f:
+                pid = int(f.read().strip())
+            try:
+                os.kill(pid, 0)
+            except OSError:
+                os.remove(_LOCK_FILE)
+        except (ValueError, OSError):
+            pass
+    with open(_LOCK_FILE, 'w') as f:
+        f.write(str(os.getpid()))
     atexit.register(lambda: os.remove(_LOCK_FILE))
 
 # Server
 def _find_free_port():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('127.0.0.1', 0))
-    port = s.getsockname()[1]; s.close()
+    port = s.getsockname()[1]
+    s.close()
     return port
 
 def _wait_for_server(port, timeout=15):
@@ -78,8 +91,10 @@ def _wait_for_server(port, timeout=15):
     while time.time() - start < timeout:
         try:
             s = socket.create_connection(('127.0.0.1', port), timeout=1)
-            s.close(); return True
-        except: time.sleep(0.1)
+            s.close()
+            return True
+        except OSError:
+            time.sleep(0.1)
     return False
 
 def _start_server():
@@ -103,19 +118,19 @@ def main():
     try:
         import webview
         api = backend.SteamToolsAPI()
-        win = webview.create_window(
+        webview.create_window(
             title="SteamREtools",
             url=f"http://127.0.0.1:{port}",
             width=1280, height=800, resizable=True, js_api=api,
         )
         webview.start(private_mode=False, debug=False)
     except ImportError:
-        print(f"[launcher] webview not available, using browser")
+        print("[launcher] webview not available, using browser")
         print(f"[launcher] Open http://127.0.0.1:{port}")
-        import webbrowser
         webbrowser.open(f"http://127.0.0.1:{port}")
         try:
-            while True: time.sleep(1)
+            while True:
+                time.sleep(1)
         except KeyboardInterrupt:
             print("\nShutting down...")
 
@@ -124,7 +139,6 @@ if __name__ == '__main__':
         main()
     except Exception as e:
         print(f"\n[launcher] FATAL: {e}", file=sys.stderr)
-        import traceback
         traceback.print_exc()
         print("\nPress Enter to exit...", file=sys.stderr)
         input()
