@@ -8,7 +8,7 @@ You can call it as you want, even `crack`.
 
 > *NOTE: NOT official SteamTools (steamtools.net)*
 >
-> *NOTE: App uses my own Hubcap key, so it has a daily limit of 25. You can change key to your own via `set HUBCAP_KEY=your_key_here && python launcher.py`*
+> *NOTE: The built-in Hubcap API key has a daily limit of 25 downloads and resets **every week**. If downloads stop working, generate your own key (see [API Key](#-api-key) section).*
 >
 > *NOTE: Not every game can install! Some of games may return not found. If you make an issue i might be able to fix it.*
 >
@@ -49,6 +49,38 @@ Everything else: manifest downloads, DepotBox API calls, ACF parsing, game searc
 
 Unfortunately, .pyc files from original SteamTools were compiled for **Windows**, that means *i CANT* make builds for **Linux/MacOS**.
 To download latest `Windows` release, go to [Releases Page](https://github.com/nazarhktwitch/SteamREtools/releases/latest) and download an executable.
+
+### API Key
+
+To use Hubcap manifest downloads you need an API key. The app comes with a built-in key, but it has limits:
+
+- **Daily limit**: ~25 downloads
+- **Key reset**: Every week (the built-in key will stop working periodically, and for me to set a new key i need to rebuild an application, what im not gonna do)
+- **No key?** Downloads will fail with "Hubcap API key not set" or "not found"
+
+**Get your own free key:**
+
+1. Go to [hubcapmanifest.com](https://hubcapmanifest.com)
+2. Click **Continue with Discord**
+3. After login, navigate to **API** section
+4. Click **Generate Key**
+5. Copy the key (starts with `smm_...`, its not gonna show again)
+
+**Set your key in the app (easiest):**
+
+1. Open SteamREtools
+2. Go to **Settings → Provider**
+3. Select **Hubcap API**
+4. Toggle **Custom Hubcap Key** ON
+5. Paste your key and it's saved automatically
+
+**Or via command line (for developers):**
+
+```bash
+set HUBCAP_KEY=smm_your_key_here && python launcher.py
+```
+
+> The custom key is persistent - set it once and it stays even after updates (unless you clear app data).
 
 ### Manual
 

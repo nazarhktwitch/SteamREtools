@@ -83,6 +83,7 @@ const PageDashboard = (() => {
     console.log('[Dashboard] allSettled resolved');
     _updateSystemStatus();
     _updateDownloadsLeft();
+    _loadRecentInstalls();
     document.getElementById('sli-last-refresh').textContent = 'Just now';
   }
 

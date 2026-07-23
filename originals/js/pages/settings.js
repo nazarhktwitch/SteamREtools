@@ -42,10 +42,10 @@ const PageSettings = (() => {
 
     const providerRadio = document.querySelector(`input[name="provider"][value="${s.provider || 'default'}"]`);
     if (providerRadio) providerRadio.checked = true;
-    const hubcapSection = document.getElementById('hubcap-settings');
-    if (hubcapSection) hubcapSection.style.display = (s.provider === 'hubcap') ? 'block' : 'none';
-    const hubcapInput = document.getElementById('hubcap-api-key-input');
-    if (hubcapInput && s.hubcap_api_key) hubcapInput.value = s.hubcap_api_key;
+    _setToggle('pref-custom-hubcap-key', s.hubcap_custom_key);
+    const hubcapKeyField = document.getElementById('hubcap-key-field');
+    if (hubcapKeyField) hubcapKeyField.style.display = s.hubcap_custom_key ? 'block' : 'none';
+    // Never pre-fill the key field — user pastes their own key when enabling Custom mode
   }
 
   function _setToggle(id, value) {
@@ -99,6 +99,7 @@ const PageSettings = (() => {
       r.addEventListener('change', _onProviderChange);
     });
 
+    document.getElementById('pref-custom-hubcap-key')?.addEventListener('change', _onCustomHubcapToggle);
     document.getElementById('hubcap-api-key-input')?.addEventListener('change', _onHubcapKeyChange);
     document.getElementById('toggle-hubcap-key-visibility')?.addEventListener('click', _toggleHubcapKeyVisibility);
   }
@@ -224,10 +225,21 @@ const PageSettings = (() => {
 
   async function _onProviderChange() {
     const provider = document.querySelector('input[name="provider"]:checked')?.value || 'default';
-    const hubcapSection = document.getElementById('hubcap-settings');
-    if (hubcapSection) hubcapSection.style.display = (provider === 'hubcap') ? 'block' : 'none';
     await API.saveSettings({ provider });
     State.addLog(`Provider changed to: ${provider}`, 'info');
+  }
+
+  async function _onCustomHubcapToggle() {
+    const enabled = document.getElementById('pref-custom-hubcap-key')?.checked ?? false;
+    const keyField = document.getElementById('hubcap-key-field');
+    if (keyField) keyField.style.display = enabled ? 'block' : 'none';
+    await API.saveSettings({ hubcap_custom_key: enabled });
+    if (!enabled) {
+      const input = document.getElementById('hubcap-api-key-input');
+      if (input) { input.value = ''; }
+      await API.saveSettings({ hubcap_api_key: '' });
+    }
+    Toast.info(enabled ? 'Custom key mode enabled' : 'Using built-in key', '', 1500);
   }
 
   async function _onHubcapKeyChange() {

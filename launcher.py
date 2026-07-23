@@ -103,22 +103,39 @@ def _patched_install_game(self, appid, skip_restart=False):
     return result
 backend.SteamToolsAPI.install_game = _patched_install_game
 
-# Set Hubcap API key (from env var, or previously saved settings, or CI placeholder)
+# Set Hubcap API key (from env var, or previously saved custom key, or CI placeholder)
 _tmp_api = backend.SteamToolsAPI()
 _HUBCAP_KEY = os.environ.get("HUBCAP_KEY") or ""
 if not _HUBCAP_KEY or _HUBCAP_KEY == "HUBCAP_KEY_PLACEHOLDER":
     try:
-        _saved = _tmp_api.get_settings().get("hubcap_api_key", "")
-        if _saved:
-            _HUBCAP_KEY = _saved
-            print("[launcher] Hubcap key loaded from saved settings")
+        _settings = _tmp_api.get_settings()
+        # If user enabled custom key in settings, use that instead of env var
+        if _settings.get("hubcap_custom_key"):
+            _saved = _settings.get("hubcap_api_key", "")
+            if _saved:
+                _HUBCAP_KEY = _saved
+                print("[launcher] Hubcap custom key loaded from settings")
+        else:
+            _saved = _settings.get("hubcap_api_key", "")
+            if _saved:
+                _HUBCAP_KEY = _saved
+                print("[launcher] Hubcap key loaded from saved settings")
     except Exception:
         pass
 if _HUBCAP_KEY and _HUBCAP_KEY != "HUBCAP_KEY_PLACEHOLDER":
-    _tmp_api.save_setting("hubcap_api_key", _HUBCAP_KEY)
-    print("[launcher] Hubcap key set")
+    # Only overwrite saved key if user hasn't enabled a custom key
+    try:
+        _settings = _tmp_api.get_settings()
+        if not _settings.get("hubcap_custom_key"):
+            _tmp_api.save_setting("hubcap_api_key", _HUBCAP_KEY)
+            print("[launcher] Hubcap key set")
+        else:
+            print("[launcher] Custom key enabled in settings, not overwriting")
+    except Exception:
+        _tmp_api.save_setting("hubcap_api_key", _HUBCAP_KEY)
+        print("[launcher] Hubcap key set")
 else:
-    print("[launcher] WARNING: Hubcap key not set. Set HUBCAP_KEY env var.")
+    print("[launcher] WARNING: Hubcap key not set. Set HUBCAP_KEY env var or configure in Settings.")
 
 # Patch load_config to include server_url/auth_code for Hubcap fallback logic
 _original_load_config = backend.SteamToolsAPI.load_config
