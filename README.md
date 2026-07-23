@@ -8,7 +8,7 @@ You can call it as you want, even `crack`.
 
 > *NOTE: NOT official SteamTools (steamtools.net)*
 >
-> *NOTE: The built-in Hubcap API key has a daily limit of 25 downloads and resets **every week**. If downloads stop working, generate your own key (see [API Key](#-api-key) section).*
+> *NOTE: The built-in Hubcap API key has a daily limit of 25 downloads and resets **every week**. If downloads stop working, generate your own key (see [API Key](#API-key) section).*
 >
 > *NOTE: Not every game can install! Some of games may return not found. If you make an issue i might be able to fix it.*
 >
