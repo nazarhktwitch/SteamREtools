@@ -60,6 +60,10 @@ backend._DEPOTBOX_ENCODED_KEY = base64.b64encode(_PREMIUM_KEY.encode()).decode()
 
 print("[launcher] Premium bypass active")
 
+# Pre-populate fixes cache so the page doesn't hang on hubcap timeout
+backend.SteamToolsAPI._fixes_cache = {"fixes": []}
+backend.SteamToolsAPI._fixes_cache_ts = time.time()
+
 # Single instance
 _LOCK_FILE = os.path.join(os.environ.get('TEMP', '.'), 'steamretools.lock')
 
