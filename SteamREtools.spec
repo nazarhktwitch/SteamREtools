@@ -12,6 +12,7 @@ a = Analysis(
     hiddenimports=[
         'requests',
         'rarfile',
+        'psutil',
         'webview',
     ],
     hookspath=[],

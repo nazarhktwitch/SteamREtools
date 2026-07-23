@@ -47,7 +47,7 @@ pip install -r requirements.txt
 or directly:
 
 ```bash
-pip install requests rarfile pywebview
+pip install requests rarfile pywebview psutil
 ```
 
 ### Run
