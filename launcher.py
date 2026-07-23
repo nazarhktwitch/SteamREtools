@@ -67,7 +67,7 @@ _HUBCAP_KEY = os.environ.get("HUBCAP_KEY") or "HUBCAP_KEY_PLACEHOLDER"
 if _HUBCAP_KEY and _HUBCAP_KEY != "HUBCAP_KEY_PLACEHOLDER":
     _tmp_api = backend.SteamToolsAPI()
     _tmp_api.save_setting("hubcap_api_key", _HUBCAP_KEY)
-    print(f"[launcher] Hubcap key set")
+    print("[launcher] Hubcap key set")
 else:
     print("[launcher] WARNING: Hubcap key not set. Set HUBCAP_KEY env var.")
 
