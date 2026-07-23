@@ -3,7 +3,10 @@ Load original .pyc modules, bypass premium with patches
 """
 import sys, os, marshal, types
 
-ORIGINALS_DIR = os.path.join(os.path.dirname(__file__), 'originals')
+if getattr(sys, 'frozen', False):
+    ORIGINALS_DIR = os.path.join(sys._MEIPASS, 'originals')
+else:
+    ORIGINALS_DIR = os.path.join(os.path.dirname(__file__), 'originals')
 
 def load_pyc_module(fullname):
     parts = fullname.split('.')

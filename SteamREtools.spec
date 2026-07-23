@@ -1,31 +1,24 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-import os, sys
-from PyInstaller.building.datastruct import Tree
-
 block_cipher = None
 
 a = Analysis(
     ['launcher.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[
+        ('originals', 'originals'),
+    ],
     hiddenimports=[
-        'PIL', 'PIL._imaging', 'requests', 'psutil',
-        'webview', 'webview.platforms.edgechromium',
-        'json', 'ctypes', 'ctypes.wintypes', 'socket',
-        'threading', 'subprocess', 'urllib.request',
-        'urllib.error', 'atexit',
+        'requests',
+        'rarfile',
+        'webview',
     ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[
-        'tkinter', 'test', 'distutils', 'setuptools',
-        'unittest', 'pydoc', 'email', 'http', 'xml',
-        'asyncio', 'multiprocessing', 'concurrent',
-    ],
-    noarchive=False
+    excludes=[],
+    noarchive=False,
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
@@ -50,5 +43,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='originals/icon.ico'
+    icon='originals/icon.ico',
 )
