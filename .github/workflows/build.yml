@@ -57,7 +57,7 @@ jobs:
         id: changelog
         shell: pwsh
         run: |
-          $prev = git describe --tags --abbrev=0 2>$null
+          $prev = git describe --tags --abbrev=0 HEAD^ 2>$null
           if ($prev) { $range = "$prev..HEAD" } else { $range = "HEAD" }
           $log = git log $range --oneline --no-decorate
           if (-not $log) { $log = "Initial release" }
