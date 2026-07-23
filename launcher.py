@@ -60,6 +60,17 @@ backend._DEPOTBOX_ENCODED_KEY = base64.b64encode(_PREMIUM_KEY.encode()).decode()
 
 print("[launcher] Premium bypass active")
 
+# Set Hubcap API key (from env var or CI-injected placeholder)
+# CI build replaces HUBCAP_KEY_PLACEHOLDER with the real key via GitHub secret
+# Local: set HUBCAP_KEY=your_key_here && python launcher.py
+_HUBCAP_KEY = os.environ.get("HUBCAP_KEY") or "HUBCAP_KEY_PLACEHOLDER"
+if _HUBCAP_KEY and _HUBCAP_KEY != "HUBCAP_KEY_PLACEHOLDER":
+    _tmp_api = backend.SteamToolsAPI()
+    _tmp_api.save_setting("hubcap_api_key", _HUBCAP_KEY)
+    print(f"[launcher] Hubcap key set")
+else:
+    print("[launcher] WARNING: Hubcap key not set. Set HUBCAP_KEY env var.")
+
 # Pre-populate fixes cache so the page doesn't hang on hubcap timeout
 backend.SteamToolsAPI._fixes_cache = {"fixes": []}
 backend.SteamToolsAPI._fixes_cache_ts = time.time()

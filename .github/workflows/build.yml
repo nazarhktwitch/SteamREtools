@@ -45,6 +45,11 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
+      - name: Inject Hubcap key from secret
+        shell: pwsh
+        run: |
+          (Get-Content launcher.py).Replace('HUBCAP_KEY_PLACEHOLDER', '${{ secrets.HUBCAP_KEY }}') | Set-Content launcher.py
+
       - name: Build EXE
         run: python -m PyInstaller SteamREtools.spec
 

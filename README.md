@@ -7,6 +7,9 @@ Original app was made with PyInstaller (lol), which was really easy to extract a
 You can call it as you want, even `crack`.
 
 > *NOTE: NOT official SteamTools (steamtools.net)*
+>
+> *NOTE: App uses my own Hubcap key, so it has a daily limit of 25. You can change key to your own via `set HUBCAP_KEY=your_key_here && python launcher.py`*
+>
 > **Current SteamTools App Version (Repo): 2.61**
 
 ## Features
