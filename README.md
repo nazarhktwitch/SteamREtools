@@ -29,7 +29,7 @@ SteamREtools loads the **original** compiled Python modules (`.pyc`) from SteamT
 | `server_minimal` | `_load_session()` reads session from `session.json` | Creates premium session |
 | `backend` | `_ENCODED_KEY` = placeholder | Set to real DepotBox API key |
 
-Everything else: manifest downloads, DepotBox API calls, ACF parsing, game search runs the **original** unmodified code.
+Everything else: manifest downloads, DepotBox API calls, ACF parsing, game search runs the **original** unmodified code (yes im lying i modified it, BUT I ONLY DELETED AI COMMENTS FROM DEVELOPERS! 😭).
 
 ## Requirements
 
@@ -37,6 +37,20 @@ Everything else: manifest downloads, DepotBox API calls, ACF parsing, game searc
 - Dependencies: see `requirements.txt` or install via pip
 
 ## Quick start
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+or directly:
+
+```bash
+pip install requests rarfile pywebview
+```
+
+### Run
 
 ```bash
 python launcher.py

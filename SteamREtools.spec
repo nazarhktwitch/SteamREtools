@@ -50,5 +50,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=originals/icon.ico
+    icon='originals/icon.ico'
 )
