@@ -36,9 +36,16 @@ Everything else: manifest downloads, DepotBox API calls, ACF parsing, game searc
 - Python 3.11 (the original bytecode is compiled for 3.11)
 - Dependencies: see `requirements.txt` or install via pip
 
-## Quick start
+## Quick Start
 
-### Install Dependencies
+### Downloading from Releases
+
+Unfortunately, .pyc files from original SteamTools were compiled for **Windows**, that means *i CANT* make builds for **Linux/MacOS**.
+To download latest `Windows` release, go to [Releases Page](https://github.com/nazarhktwitch/SteamREtools/releases/latest) and download an executable.
+
+### Manual
+
+#### Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -50,7 +57,7 @@ or directly:
 pip install requests rarfile pywebview psutil
 ```
 
-### Run
+#### Run
 
 ```bash
 python launcher.py

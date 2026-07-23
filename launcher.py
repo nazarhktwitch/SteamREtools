@@ -19,9 +19,10 @@ print("[launcher] Loading server_minimal...")
 server_minimal = load_original('server_minimal')
 print("[launcher] Modules loaded OK")
 
-# Patch server_minimal namespace
-# Using exec() to define patched functions WITHIN server_minimal's namespace,
-# so their globals reference _session, _SESSION_FILE etc. from the correct module.
+# Fix BASE_DIR for frozen mode: original code uses sys._MEIPASS (without /originals)
+if getattr(sys, 'frozen', False):
+    server_minimal.BASE_DIR = os.path.join(sys._MEIPASS, 'originals')
+
 print("[launcher] Patching premium checks...")
 exec('''
 def _load_session():
