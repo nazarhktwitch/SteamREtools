@@ -60,16 +60,77 @@ backend._DEPOTBOX_ENCODED_KEY = base64.b64encode(_PREMIUM_KEY.encode()).decode()
 
 print("[launcher] Premium bypass active")
 
-# Set Hubcap API key (from env var or CI-injected placeholder)
-# CI build replaces HUBCAP_KEY_PLACEHOLDER with the real key via GitHub secret
-# Local: set HUBCAP_KEY=your_key_here && python launcher.py
-_HUBCAP_KEY = os.environ.get("HUBCAP_KEY") or "HUBCAP_KEY_PLACEHOLDER"
+# Fix _send: original bytecode has two call patterns:
+#   Pattern A: _send(status, headers, body)         - 3 args
+#   Pattern B: _send(status, headers, body, code)   - 4 args (LIST_EXTEND flattens _json_resp tuple)
+# Patch to accept both - use 4th arg as actual status if present
+Handler = server_minimal.Handler
+_original_send = Handler._send
+def _patched_send(self, *args):
+    if len(args) == 3:
+        return _original_send(self, *args)
+    if len(args) == 4:
+        # Pattern B: _send(status, headers, body, code) - use last as actual status
+        return _original_send(self, args[3], args[1], args[2])
+    # Fallback
+    return _original_send(self, *args)
+Handler._send = _patched_send
+
+# Patch _api_post to bypass manilua auth check for install/manifest endpoints
+# manilua.steamtools.app is used only as auth gate; Hubcap/DepotBox have their own API keys
+_original_api_post = server_minimal._api_post
+_FORCE_OK_PATHS = {'/api/desktop/install', '/api/desktop/update', '/api/desktop/refund-install'}
+def _patched_api_post(path, body, token, timeout=8):
+    if path in _FORCE_OK_PATHS:
+        return (200, {'ok': True, 'server_url': ''})
+    return _original_api_post(path, body, token, timeout)
+server_minimal._api_post = _patched_api_post
+
+# Patch install_game to try Hubcap if primary provider (DepotBox) returns not_found
+_original_install_game = backend.SteamToolsAPI.install_game
+def _patched_install_game(self, appid, skip_restart=False):
+    result = _original_install_game(self, appid, skip_restart)
+    if result.get('not_found'):
+        settings = self.get_settings()
+        provider = settings.get('provider', 'default')
+        if provider != 'hubcap':
+            hubcap_key = settings.get('hubcap_api_key', '').strip()
+            if hubcap_key:
+                old = provider
+                self.save_setting('provider', 'hubcap')
+                result = _original_install_game(self, appid, skip_restart)
+                self.save_setting('provider', old)
+    return result
+backend.SteamToolsAPI.install_game = _patched_install_game
+
+# Set Hubcap API key (from env var, or previously saved settings, or CI placeholder)
+_tmp_api = backend.SteamToolsAPI()
+_HUBCAP_KEY = os.environ.get("HUBCAP_KEY") or ""
+if not _HUBCAP_KEY or _HUBCAP_KEY == "HUBCAP_KEY_PLACEHOLDER":
+    try:
+        _saved = _tmp_api.get_settings().get("hubcap_api_key", "")
+        if _saved:
+            _HUBCAP_KEY = _saved
+            print("[launcher] Hubcap key loaded from saved settings")
+    except Exception:
+        pass
 if _HUBCAP_KEY and _HUBCAP_KEY != "HUBCAP_KEY_PLACEHOLDER":
-    _tmp_api = backend.SteamToolsAPI()
     _tmp_api.save_setting("hubcap_api_key", _HUBCAP_KEY)
     print("[launcher] Hubcap key set")
 else:
     print("[launcher] WARNING: Hubcap key not set. Set HUBCAP_KEY env var.")
+
+# Patch load_config to include server_url/auth_code for Hubcap fallback logic
+_original_load_config = backend.SteamToolsAPI.load_config
+def _patched_load_config(self):
+    result = _original_load_config(self)
+    if result.get('ok'):
+        if 'server_url' not in result:
+            result['server_url'] = getattr(self, '_api_url', '')
+        if 'auth_code' not in result:
+            result['auth_code'] = ''
+    return result
+backend.SteamToolsAPI.load_config = _patched_load_config
 
 # Pre-populate fixes cache so the page doesn't hang on hubcap timeout
 backend.SteamToolsAPI._fixes_cache = {"fixes": []}
@@ -79,19 +140,14 @@ backend.SteamToolsAPI._fixes_cache_ts = time.time()
 _LOCK_FILE = os.path.join(os.environ.get('TEMP', '.'), 'steamretools.lock')
 
 def _terminate_prior_instance():
-    if os.path.exists(_LOCK_FILE):
-        try:
-            with open(_LOCK_FILE) as f:
-                pid = int(f.read().strip())
-            try:
-                os.kill(pid, 0)
-            except OSError:
-                os.remove(_LOCK_FILE)
-        except (ValueError, OSError):
-            pass
-    with open(_LOCK_FILE, 'w') as f:
-        f.write(str(os.getpid()))
-    atexit.register(lambda: os.remove(_LOCK_FILE))
+    try:
+        if os.path.exists(_LOCK_FILE):
+            os.remove(_LOCK_FILE)
+        with open(_LOCK_FILE, 'w') as f:
+            f.write(str(os.getpid()))
+        atexit.register(lambda: os.remove(_LOCK_FILE))
+    except OSError:
+        pass
 
 # Server
 def _find_free_port():
