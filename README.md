@@ -54,7 +54,7 @@ To download latest `Windows` release, go to [Releases Page](https://github.com/n
 
 To use Hubcap manifest downloads you need an API key. The app comes with a built-in key, but it has limits:
 
-- **Daily limit**: ~25 downloads
+- **Daily limit**: 25 downloads
 - **Key reset**: Every week (the built-in key will stop working periodically, and for me to set a new key i need to rebuild an application, what im not gonna do)
 - **No key?** Downloads will fail with "Hubcap API key not set" or "not found"
 
