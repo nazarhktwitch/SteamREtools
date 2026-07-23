@@ -34,22 +34,22 @@ if getattr(sys, 'frozen', False):
 print("[launcher] Patching premium checks...")
 exec('''
 def _load_session():
-    _session.update(token="bypass", user={"name": "SteamREtools User", "id": "0"}, tier="premium", usage={"daily": 0, "total": 999999})
+    _session.update(token="bypass", user={"name": "SteamREtools User", "id": "0"}, tier="premium2", usage={"daily": 0, "total": 999999})
 
 def _save_session():
     pass
 
 def _verify_and_refresh():
-    _session.update(tier="premium")
-    return {"tier": "premium", "usage": {"daily": 0, "total": 999999}}
+    _session.update(tier="premium2")
+    return {"tier": "premium2", "usage": {"daily": 0, "total": 999999}}
 
 def _bg_verify():
-    _session.update(tier="premium")
+    _session.update(tier="premium2")
     while True:
         time.sleep(3600)
-        _session.update(tier="premium")
+        _session.update(tier="premium2")
 
-_session.update(token="bypass", user={"name": "SteamREtools User", "id": "0"}, tier="premium", usage={"daily": 0, "total": 999999})
+_session.update(token="bypass", user={"name": "SteamREtools User", "id": "0"}, tier="premium2", usage={"daily": 0, "total": 999999})
 ''', server_minimal.__dict__)
 
 # Patch backend
