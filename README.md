@@ -56,7 +56,7 @@ pip install requests rarfile pywebview
 python launcher.py
 ```
 
-Opens a web UI at `http://127.0.0.1:{port}`.
+Opens an app GUI and a web UI at `http://127.0.0.1:{port}`.
 
 ## GUI Note
 
