@@ -69,10 +69,9 @@ To use Hubcap manifest downloads you need an API key. The app comes with a built
 **Set your key in the app (easiest):**
 
 1. Open SteamREtools
-2. Go to **Settings → Provider**
-3. Select **Hubcap API**
-4. Toggle **Custom Hubcap Key** ON
-5. Paste your key and it's saved automatically
+2. Go to **Settings -> Provider**
+3. Toggle **Custom Hubcap Key** ON
+4. Paste your key and it's saved automatically
 
 **Or via command line (for developers):**
 
