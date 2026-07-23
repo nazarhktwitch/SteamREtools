@@ -10,6 +10,8 @@ You can call it as you want, even `crack`.
 >
 > *NOTE: App uses my own Hubcap key, so it has a daily limit of 25. You can change key to your own via `set HUBCAP_KEY=your_key_here && python launcher.py`*
 >
+> *NOTE: Not every game can install! Some of games may return not found. If you make an issue i might be able to fix it.*
+>
 > **Current SteamTools App Version (Repo): 2.61**
 
 ## Features
