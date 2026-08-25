@@ -6,7 +6,7 @@ This is a Reverse Engineered open-source recreation of SteamTools App, with all 
 Original app was made with PyInstaller (lol), which was really easy to extract and check its code.
 You can call it as you want, even `crack`.
 
-> 24.09.2026 - This project has been archived due to unresolved issues that made it unusable. The project is no longer maintained and will not be continued in the future.
+> 24.08.2026 - This project has been archived due to unresolved issues that made it unusable. The project is no longer maintained and will not be continued in the future.
 
 > *NOTE: NOT official SteamTools (steamtools.net)*
 >
